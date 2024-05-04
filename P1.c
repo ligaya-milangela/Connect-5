@@ -1,22 +1,3 @@
-/* Filename:
- *      client.c
- *
- * Descrition:
- *      This program is used in tandem with server.c
- *      This demonstrates the use of sockets to create a TCP client.
- *
- * Compile Instructions:
- *      `gcc -o client client.c' or use the accompanying Makefile 
- * 
- * Author:
- *      Glenn G. Fabia
- *      glennfabia@adnu.edu.ph
- *      Ateneo de Naga University
- *
- * Notes:
- *      This is a handout for ICST240 - Operating Systems
- *      Second Sem S/Y 2016-2017
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +25,7 @@ int main(int argc,  char *argv[]){
         exit(1);
     }
 
-    printf("Client starting ...\n");
+    printf("PC1 starting ...\n");
     // Create a socket using TCP
     client_sock = socket(AF_INET,  SOCK_STREAM,  0);
     if (client_sock < 0) 
@@ -73,23 +54,23 @@ int main(int argc,  char *argv[]){
 
     printf("Connection successful!\n");
 
-    // Communicate
-    printf("Please type a message : ");
+    // Entering the comlumn number
+    printf("Enter Column Number ");
     bzero(buffer, 256);
     fgets(buffer, 255, stdin);
 
-    printf("Sending message to server ...\n");
+    printf("Sending table to PC2 ...\n");
     
     n = send(client_sock, buffer, strlen(buffer), 0);
     if (n < 0) 
          die_with_error("Error: send() Failed.");
          
-    printf("Message sent! Awaiting reply ...\n");
+    printf("Table sent! Awaiting for PC2's move ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
     if (n < 0) 
          die_with_error("Error: recv() Failed.");
-    printf("Server says : %s\n", buffer);
+    printf("PC2's move : %s\n", buffer);
 
     close(client_sock);
     

@@ -1,22 +1,3 @@
-/* Filename:
- *      server.c
- *
- * Descrition:
- *      This program is used in tandem with client.c
- *      This demonstrates the use of sockets to create a TCP server.
- *
- * Compile Instructions:
- *      `gcc -o server server.c' or use the accompanying Makefile 
- * 
- * Author:
- *      Glenn G. Fabia
- *      glennfabia@adnu.edu.ph
- *      Ateneo de Naga University
- *
- * Notes:
- *      This is a handout for ICST240 - Operating Systems
- *      Second Sem S/Y 2016-2017
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +22,7 @@ int main(int argc, char *argv[]){
         exit(1);
     }
 
-    printf("Server starting ...\n");
+    printf("PC2 starting ...\n");
     // Create a socket for incoming connections
     server_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (server_sock < 0) 
@@ -59,7 +40,7 @@ int main(int argc, char *argv[]){
        
     // Mark the socket so it will listen for incoming connections
     listen(server_sock, 5);
-    printf("Server listening to port %d ...\n", port_no);
+    printf("PC2 listening to port %d ...\n", port_no);
     
     printf("Waiting for connection(s) ...\n");
 
@@ -69,14 +50,14 @@ int main(int argc, char *argv[]){
     if (client_sock < 0) 
         die_with_error("Error: accept() Failed.");
 
-    printf("Client succesfully connected ...\n");    
+    printf("PC1 succesfully connected ...\n");    
     // Communicate    
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
     if (n < 0) die_with_error("Error: recv() Failed.");
-    printf("Message received from client : %s", buffer);
+    printf("Table received from PC1 : %s", buffer);
 
-    printf("Sending reply ...\n");
+    printf("Sending move ...\n");
     bzero(buffer, 256);
     fgets(buffer, 255, stdin);
     n = send(client_sock, buffer, strlen(buffer), 0);
