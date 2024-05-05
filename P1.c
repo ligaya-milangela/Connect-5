@@ -74,17 +74,18 @@ int main(int argc,  char *argv[]){
     
     option(buffer, 'O', table);
     display(table);
+    n = send(client_sock, buffer, strlen(buffer), 0);
     if (Winner(table, 'O')) {
         printf("Player 1 wins!\n");
         break;
     }
-    printf("Sending message to PC2 ...\n");
+    printf("Sending move to PC2 ...\n");
     
-    n = send(client_sock, buffer, strlen(buffer), 0);
+    
     if (n < 0) 
          die_with_error("Error: send() Failed.");
          
-    printf("Message sent! Awaiting reply ...\n");
+    printf("Move sent! Awaiting reply ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
     option(buffer, 'X', table);

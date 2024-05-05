@@ -18,6 +18,7 @@ int main(int argc, char *argv[]){
     int server_sock, client_sock, port_no, client_size, n;
     char buffer[256];
     struct sockaddr_in server_addr, client_addr;
+    bool ismain_loop = 1;
     if (argc < 2) {
         printf("Usage: %s port_no", argv[0]);
         exit(1);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]){
             table[i][j] = ' ';
         }
     }
-    while(1){
+    while(ismain_loop = 1){
     display(table);
     
     // Accept new connection
@@ -70,19 +71,21 @@ int main(int argc, char *argv[]){
     display(table);
     if (Winner(table, 'O')) {
         printf("Player 1 wins!\n");
+        ismain_loop = 0;
         break;
     }
-    printf("Sending reply ...\n");
+    printf("Sending move ...\nEnter Column: ");
 
     bzero(buffer, 256);
     fgets(buffer, 255, stdin);
     option(buffer, 'X', table);
     display(table);
+    n = send(client_sock, buffer, strlen(buffer), 0);
     if (Winner(table, 'X')) {
         printf("Player 2 wins!\n");
+        ismain_loop = 0;
         break;
     }
-    n = send(client_sock, buffer, strlen(buffer), 0);
     
     if (n < 0) die_with_error("Error: send() Failed.");
     }
