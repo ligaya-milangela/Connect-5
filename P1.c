@@ -7,13 +7,19 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
-
-void die_with_error(char *error_msg){
-    printf("%s", error_msg);
-    exit(-1);
-}
+#include <ctype.h>
+#include <stdbool.h>
+#include "functions.c"
 
 int main(int argc,  char *argv[]){
+    int rows = 9;
+    int cols = 9;
+    char c;
+    char player_turn = 'O'; //first turn starts with 'O'
+   
+    char table[rows][cols];
+    
+    
     
     int client_sock,  port_no,  n;
     struct sockaddr_in server_addr;
@@ -48,31 +54,51 @@ int main(int argc,  char *argv[]){
          
     server_addr.sin_port = htons(port_no);
 
-    printf("Connecting to server at port %d...\n", port_no);
+    printf("Connecting to PC2 at port %d...\n", port_no);
     if (connect(client_sock, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) 
         die_with_error("Error: connect() Failed.");
 
     printf("Connection successful!\n");
-
-    // Entering the comlumn number
-    printf("Enter Column Number ");
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            table[i][j] = ' ';
+        }
+    }
+    display(table);
+    while(1){
+    
+    // Communicate
+    printf("Enter column : ");
     bzero(buffer, 256);
     fgets(buffer, 255, stdin);
-
-    printf("Sending table to PC2 ...\n");
+    
+    option(buffer, 'O', table);
+    display(table);
+    if (Winner(table, 'O')) {
+        printf("Player 1 wins!\n");
+        break;
+    }
+    printf("Sending message to PC2 ...\n");
     
     n = send(client_sock, buffer, strlen(buffer), 0);
     if (n < 0) 
          die_with_error("Error: send() Failed.");
          
-    printf("Table sent! Awaiting for PC2's move ...\n");
+    printf("Message sent! Awaiting reply ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
+    option(buffer, 'X', table);
+    display(table);
+    if (Winner(table, 'X')) {
+        printf("Player 2 wins!\n");
+        break;
+    }
     if (n < 0) 
          die_with_error("Error: recv() Failed.");
-    printf("PC2's move : %s\n", buffer);
-
+    printf("PC2 says : %s\n", buffer);
+    }
     close(client_sock);
     
     return 0;
 }
+

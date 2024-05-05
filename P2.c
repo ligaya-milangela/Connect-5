@@ -2,18 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
+#include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
-
 #include <unistd.h>
-
-void die_with_error(char *error_msg){
-    printf("%s", error_msg);
-    exit(-1);
-}
+#include <ctype.h>
+#include <stdbool.h>
+#include "functions.c"
 
 int main(int argc, char *argv[]){
+    char c;
+    char player_turn = 'O'; //first turn starts with 'O'
+   
+    char table[9][9];
     int server_sock, client_sock, port_no, client_size, n;
     char buffer[256];
     struct sockaddr_in server_addr, client_addr;
@@ -43,7 +44,14 @@ int main(int argc, char *argv[]){
     printf("PC2 listening to port %d ...\n", port_no);
     
     printf("Waiting for connection(s) ...\n");
-
+    for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            table[i][j] = ' ';
+        }
+    }
+    while(1){
+    display(table);
+    
     // Accept new connection
     client_size = sizeof(client_addr);
     client_sock = accept(server_sock, (struct sockaddr *) &client_addr, &client_size);
@@ -51,21 +59,36 @@ int main(int argc, char *argv[]){
         die_with_error("Error: accept() Failed.");
 
     printf("PC1 succesfully connected ...\n");    
-    // Communicate    
+    // Communicate  
+    while(1){  
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
     if (n < 0) die_with_error("Error: recv() Failed.");
-    printf("Table received from PC1 : %s", buffer);
+    printf("Message received from PC1 : %s", buffer);
+     
+    option(buffer, 'O', table);
+    display(table);
+    if (Winner(table, 'O')) {
+        printf("Player 1 wins!\n");
+        break;
+    }
+    printf("Sending reply ...\n");
 
-    printf("Sending move ...\n");
     bzero(buffer, 256);
     fgets(buffer, 255, stdin);
+    option(buffer, 'X', table);
+    display(table);
+    if (Winner(table, 'X')) {
+        printf("Player 2 wins!\n");
+        break;
+    }
     n = send(client_sock, buffer, strlen(buffer), 0);
+    
     if (n < 0) die_with_error("Error: send() Failed.");
-
+    }
+    }
     printf("Closing connection ...\n");
     close(client_sock);
-    
     close(server_sock);
     
     return 0; 
