@@ -68,9 +68,15 @@ int main(int argc,  char *argv[]){
     while(1){
     
     // Communicate
-    printf("Enter column : ");
+  
     bzero(buffer, 256);
-    fgets(buffer, 255, stdin);
+    do {
+     	printf("Enter column : ");
+    	fgets(buffer, 255, stdin);
+    } while(tolower(buffer[0]) != 'a' && tolower(buffer[0]) != 'b' &&
+    	    tolower(buffer[0]) != 'c' && tolower(buffer[0]) != 'd' &&
+    	    tolower(buffer[0]) != 'e' && tolower(buffer[0]) != 'f' &&
+    	    tolower(buffer[0]) != 'g' && tolower(buffer[0]) != 'h');
     
     option(buffer, 'O', table);
     display(table);
@@ -79,13 +85,13 @@ int main(int argc,  char *argv[]){
         printf("Player 1 wins!\n");
         break;
     }
-    printf("Sending move to PC2 ...\n");
+    printf("Sending message to PC2 ...\n");
     
     
     if (n < 0) 
          die_with_error("Error: send() Failed.");
          
-    printf("Move sent! Awaiting reply ...\n");
+    printf("Message sent! Awaiting reply ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
     option(buffer, 'X', table);
@@ -102,4 +108,5 @@ int main(int argc,  char *argv[]){
     
     return 0;
 }
+
 

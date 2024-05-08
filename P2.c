@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,8 +16,8 @@ int main(int argc, char *argv[]){
     char table[9][9];
     int server_sock, client_sock, port_no, client_size, n;
     char buffer[256];
-    struct sockaddr_in server_addr, client_addr;
     bool ismain_loop = 1;
+    struct sockaddr_in server_addr, client_addr;
     if (argc < 2) {
         printf("Usage: %s port_no", argv[0]);
         exit(1);
@@ -50,7 +49,7 @@ int main(int argc, char *argv[]){
             table[i][j] = ' ';
         }
     }
-    while(ismain_loop = 1){
+    while(ismain_loop == 1){
     display(table);
     
     // Accept new connection
@@ -74,10 +73,15 @@ int main(int argc, char *argv[]){
         ismain_loop = 0;
         break;
     }
-    printf("Sending move ...\nEnter Column: ");
 
     bzero(buffer, 256);
-    fgets(buffer, 255, stdin);
+    do {
+     	printf("Enter column : ");
+    	fgets(buffer, 255, stdin);
+    } while(tolower(buffer[0]) != 'a' && tolower(buffer[0]) != 'b' &&
+    	    tolower(buffer[0]) != 'c' && tolower(buffer[0]) != 'd' &&
+    	    tolower(buffer[0]) != 'e' && tolower(buffer[0]) != 'f' &&
+    	    tolower(buffer[0]) != 'g' && tolower(buffer[0]) != 'h');
     option(buffer, 'X', table);
     display(table);
     n = send(client_sock, buffer, strlen(buffer), 0);
@@ -86,6 +90,7 @@ int main(int argc, char *argv[]){
         ismain_loop = 0;
         break;
     }
+    
     
     if (n < 0) die_with_error("Error: send() Failed.");
     }
