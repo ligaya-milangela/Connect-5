@@ -1,9 +1,12 @@
 #include <stdio.h>
+#include <time.h>
+
 
 void die_with_error(char *error_msg){
     printf("%s", error_msg);
     exit(-1);
 }
+
 void block(int col, char table[9][9], char player){
     for(int i=8; i>=0; i--){
         if (table[i][col] == ' '){
@@ -12,7 +15,40 @@ void block(int col, char table[9][9], char player){
         }
     }
 }
-void option (const char* input, char player_turn, char table[9][9]){
+
+void shuffle(char table[9][9]) {
+    srand(time(NULL));
+    for(int j = 1; j < 9; j++) {
+        int disc_count = 0;
+        char temp_discs[8] = {0};
+
+        // copy discs to temp arr
+        for(int i = 8; i >= 1; i--) {
+            if (table[i][j] != ' ') {
+                temp_discs[disc_count] = table[i][j];
+                disc_count++;
+            }
+        }
+
+        // shuffle discs in temp arr
+        for (int i = 0; i < disc_count - 1; i++) {
+            int rand_index = rand() % (disc_count - i) + i;
+            char temp = temp_discs[i];
+            temp_discs[i] = temp_discs[rand_index];
+            temp_discs[rand_index] = temp;
+        }
+
+        // copy shuffled discs back to the table
+        for(int i = 8, k = 0; i >= 1; i--) {
+            if (table[i][j] != ' ') {
+                table[i][j] = temp_discs[k];
+                k++;
+            }
+        }
+    }
+}
+
+void option(const char* input, char player_turn, char table[9][9]){
      switch (tolower(input[0])){
         case 'a':
             block(1, table, player_turn);
@@ -38,19 +74,23 @@ void option (const char* input, char player_turn, char table[9][9]){
         case 'h':
             block(8, table, player_turn);
             break;
+        case 'z':
+            shuffle(table);
+            break;
         default:
             printf("Invalid Input\n");
     }
 }
-void display (char table [9][9]){
+
+void display(char table[9][9]){
     for(int j = 1; j <= 8; j++) {
-        table[0][j] = 'A' + j-1;
+        table[0][j] = 'A' + j - 1;
     }
-   
+
     for(int i = 1; i < 9; i++) {
         table[i][0] = '0' + i;
     }
-   
+
     for(int i = 0; i < 9; i++) {
         for(int j = 0; j < 9; j++) {
             printf("%c| ", table[i][j]);
@@ -58,12 +98,13 @@ void display (char table [9][9]){
         printf("\n");
     }
 }
+
 bool Winner(char table[9][9], char player) {
     //horizontal
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 5; j++) {
             if (table[i][j] == player && table[i][j+1] == player && table[i][j+2] == player && table[i][j+3] == player && table[i][j+4] == player)
-                return 1;
+                return true;
         }
     }
 
@@ -71,7 +112,7 @@ bool Winner(char table[9][9], char player) {
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 9; j++) {
             if (table[i][j] == player && table[i+1][j] == player && table[i+2][j] == player && table[i+3][j] == player && table[i+4][j] == player)
-                return 1;
+                return true;
         }
     }
 
@@ -79,7 +120,7 @@ bool Winner(char table[9][9], char player) {
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
             if (table[i][j] == player && table[i+1][j+1] == player && table[i+2][j+2] == player && table[i+3][j+3] == player && table[i+4][j+4] == player)
-                return 1;
+                return true;
         }
     }
 
@@ -87,9 +128,9 @@ bool Winner(char table[9][9], char player) {
     for (int i = 4; i < 9; i++) {
         for (int j = 0; j < 5; j++) {
             if (table[i][j] == player && table[i-1][j+1] == player && table[i-2][j+2] == player && table[i-3][j+3] == player && table[i-4][j+4] == player)
-                return 1;
+                return true;
         }
     }
 
-    return 0;
+    return false;
 }
