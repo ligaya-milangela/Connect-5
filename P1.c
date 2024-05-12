@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +15,9 @@ int main(int argc,  char *argv[]){
     int cols = 9;
     char c;
     char player_turn = 'O'; //first turn starts with 'O'
-   
+   int shuffle_count = 1;
+    int block_count = 1;
+    int swap_count = 1;
     char table[rows][cols];
     
     
@@ -66,23 +67,27 @@ int main(int argc,  char *argv[]){
     }
     display(table);
     while(1){
-    
+    powerups_display(shuffle_count, block_count, swap_count);
     // Communicate
   
     bzero(buffer, 256);
     do {
      	printf("Enter column : ");
     	fgets(buffer, 255, stdin);
-    } while(tolower(buffer[0]) != 'a' && tolower(buffer[0]) != 'b' &&
-    	    tolower(buffer[0]) != 'c' && tolower(buffer[0]) != 'd' &&
-    	    tolower(buffer[0]) != 'e' && tolower(buffer[0]) != 'f' &&
-    	    tolower(buffer[0]) != 'g' && tolower(buffer[0]) != 'h');
+    } while (!((tolower(buffer[0]) >= 'a' && tolower(buffer[0]) <= 'h') ||
+         (tolower(buffer[0]) == 'z' && shuffle_count == 0) ||
+         (tolower(buffer[0]) == 'q' && block_count == 0 ||
+          (tolower(buffer[1]) >= 'a' && tolower(buffer[1]) <= 'h'))));
+
+    if(shuffle_count == 1 && tolower(buffer[0]) == 'z')
+    	shuffle_count = 0;
+    if(block_count == 1 && tolower(buffer[0]) == 'q')
+    	block_count = 0;
     
     option(buffer, 'O', table);
-    display(table);
+    
     n = send(client_sock, buffer, strlen(buffer), 0);
-    if (Winner(table, 'O')) {
-        printf("Player 1 wins!\n");
+    if (Winner(table)){
         break;
     }
     printf("Sending message to PC2 ...\n");
@@ -94,10 +99,10 @@ int main(int argc,  char *argv[]){
     printf("Message sent! Awaiting reply ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
-    option(buffer, 'X', table);
     display(table);
-    if (Winner(table, 'X')) {
-        printf("Player 2 wins!\n");
+    option(buffer, 'X', table);
+    
+    if (Winner(table)) {
         break;
     }
     if (n < 0) 
@@ -108,5 +113,3 @@ int main(int argc,  char *argv[]){
     
     return 0;
 }
-
-

@@ -12,7 +12,9 @@
 int main(int argc, char *argv[]){
     char c;
     char player_turn = 'O'; //first turn starts with 'O'
-   
+    int shuffle_count = 1;
+    int block_count = 1;
+    int swap_count = 1;
     char table[9][9];
     int server_sock, client_sock, port_no, client_size, n;
     char buffer[256];
@@ -61,15 +63,16 @@ int main(int argc, char *argv[]){
     printf("PC1 succesfully connected ...\n");    
     // Communicate  
     while(1){  
+    
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
+    display(table);
     if (n < 0) die_with_error("Error: recv() Failed.");
     printf("Message received from PC1 : %s", buffer);
-     
+     powerups_display(shuffle_count, block_count, swap_count);
     option(buffer, 'O', table);
-    display(table);
-    if (Winner(table, 'O')) {
-        printf("Player 1 wins!\n");
+    
+    if (Winner(table)) {
         ismain_loop = 0;
         break;
     }
@@ -78,15 +81,21 @@ int main(int argc, char *argv[]){
     do {
      	printf("Enter column : ");
     	fgets(buffer, 255, stdin);
-    } while(tolower(buffer[0]) != 'a' && tolower(buffer[0]) != 'b' &&
-    	    tolower(buffer[0]) != 'c' && tolower(buffer[0]) != 'd' &&
-    	    tolower(buffer[0]) != 'e' && tolower(buffer[0]) != 'f' &&
-    	    tolower(buffer[0]) != 'g' && tolower(buffer[0]) != 'h');
+    } while (!((tolower(buffer[0]) >= 'a' && tolower(buffer[0]) <= 'h') ||
+         (tolower(buffer[0]) == 'z' && shuffle_count == 0) ||
+         (tolower(buffer[0]) == 'q' && block_count == 0 ||
+          (tolower(buffer[1]) >= 'a' && tolower(buffer[1]) <= 'h'))));
+
+
+
+    if(shuffle_count == 1 && tolower(buffer[0]) == 'z')
+    	shuffle_count = 0;
+    if(block_count == 1 && tolower(buffer[0]) == 'q')
+    	block_count = 0;
     option(buffer, 'X', table);
-    display(table);
+    
     n = send(client_sock, buffer, strlen(buffer), 0);
-    if (Winner(table, 'X')) {
-        printf("Player 2 wins!\n");
+    if (Winner(table)) {
         ismain_loop = 0;
         break;
     }
