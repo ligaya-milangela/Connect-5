@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "functions.c"
+#include "function.c"
 
 int main(int argc,  char *argv[]){
     int rows = 9;
@@ -16,7 +16,7 @@ int main(int argc,  char *argv[]){
     char c;
     char player_turn = 'O'; //first turn starts with 'O'
    int shuffle_count = 1;
-    int block_count = 1;
+   int doubleturn_count = 1;
     int swap_count = 1;
     char table[rows][cols];
     
@@ -67,26 +67,36 @@ int main(int argc,  char *argv[]){
     }
     display(table);
     while(1){
-    powerups_display(shuffle_count, block_count, swap_count);
+    powerups_display(shuffle_count, doubleturn_count, swap_count);
     // Communicate
   
     bzero(buffer, 256);
     do {
      	printf("Enter column : ");
     	fgets(buffer, 255, stdin);
-    } while (!((tolower(buffer[0]) >= 'a' && tolower(buffer[0]) <= 'h') ||
-         (tolower(buffer[0]) == 'z' && shuffle_count == 0) ||
-         (tolower(buffer[0]) == 'q' && block_count == 0 ||
-          (tolower(buffer[1]) >= 'a' && tolower(buffer[1]) <= 'h'))));
+    	if (tolower(buffer[0]) == 'w' && doubleturn_count != 0)
+    	{
+    		for(int i = 0; i < 2; i++){
+    			fgets(buffer, 255, stdin);
+    			if(i == 0)
+    			{
+    				option(buffer, 'O', table);
+    				
+    			}
+    		}
+    	}
+    } while (
+    	choices(tolower(buffer[0]), shuffle_count, doubleturn_count)
+    	
+    	);
 
-    if(shuffle_count == 1 && tolower(buffer[0]) == 'z')
-    	shuffle_count = 0;
-    if(block_count == 1 && tolower(buffer[0]) == 'q')
-    	block_count = 0;
-    
+    if (shuffle_count == 1 && tolower(buffer[0]) == 'z'){
+    	shuffle_count = 0;}
+    if(doubleturn_count == 1 && tolower(buffer[0]) == 'w'){
+    	doubleturn_count = 0; }
     option(buffer, 'O', table);
     
-    n = send(client_sock, buffer, strlen(buffer), 0);
+    n = send(client_sock, table, 81, 0);
     if (Winner(table)){
         break;
     }
@@ -99,15 +109,14 @@ int main(int argc,  char *argv[]){
     printf("Message sent! Awaiting reply ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
-    display(table);
-    option(buffer, 'X', table);
+    modify_table(buffer, table);
+
     
     if (Winner(table)) {
         break;
     }
     if (n < 0) 
          die_with_error("Error: recv() Failed.");
-    printf("PC2 says : %s\n", buffer);
     }
     close(client_sock);
     

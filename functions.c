@@ -17,21 +17,38 @@ void display(char table[9][9]){
         printf("\n");
     }
 }
+void modify_table(char *buffer, char table[9][9]){
+
+	int rows = 9;
+	int cols = 9;	
+	for(int i = 0; i < 9; i++) {
+        for(int j = 0; j < 9; j++) {
+            table[i][j] = buffer[i*cols+j];
+        }
+    }
+    display(table);
+}
+bool choices(char input, int shuffle_count, int doubleturn_count){
+	return (input != 'a' && input != 'b' &&
+    	input != 'c' && input != 'd' &&
+    	input != 'e' && input != 'f' &&
+    	input != 'g' && input != 'h' && input != 'z' &&
+    	(input == 'z' && shuffle_count == 0));
+}
 void die_with_error(char *error_msg){
     printf("%s", error_msg);
     exit(-1);
 }
 
-void powerups_display(int shuffle_count, int block_count, int swap_count){
+void powerups_display(int shuffle_count, int doubleturn_count, int swap_count){
 
 	if(shuffle_count != 0)
 		printf("Z - Shuffle    ");
-	if(block_count !=0)
-		printf("Q - Block     ");
+	if(doubleturn_count != 0)
+		printf("W - Shuffle    ");
 	if(swap_count != 0)
-		printf("W - Swap     \n");
+		printf("Q - Swap     \n");
 }
-
 
 void block(int col, char table[9][9], char player){
     for(int i=8; i>=0; i--){
@@ -89,37 +106,7 @@ void block_column(int col, char table[9][9]){
 	display(table);
 
 }
-void power_block (char input, char table[9][9]){
-	switch (tolower(input)){
-        case 'a':
-            block_column(1, table);
-            break;
-        case 'b':
-            block_column(2, table);
-            break;
-        case 'c':
-            block_column(3, table);
-            break;
-        case 'd':
-            block_column(4, table);
-            break;
-        case 'e':
-            block_column(5, table);
-            break;
-        case 'f':
-            block_column(6, table);
-            break;
-        case 'g':
-            block_column(7, table);
-            break;
-        case 'h':
-            block_column(8, table);
-            break;
-        default:
-            printf("Invalid Input\n");
-    }
 
-}
 void option(const char* input, char player_turn, char table[9][9]){
      switch (tolower(input[0])){
         case 'a':
@@ -148,9 +135,6 @@ void option(const char* input, char player_turn, char table[9][9]){
             break;
         case 'z':
             shuffle(table);
-            break;
-        case 'q':
-            power_block(tolower(input[1]), table);
             break;
         default:
             printf("Invalid Input\n");
