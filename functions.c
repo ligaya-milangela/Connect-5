@@ -43,9 +43,9 @@ void die_with_error(char *error_msg){
 void powerups_display(int shuffle_count, int doubleturn_count, int swap_count){
 
 	if(shuffle_count != 0)
-		printf("Z - Shuffle    ");
+		printf("Z - Shuffle    \n");
 	if(doubleturn_count != 0)
-		printf("W - Shuffle    ");
+		printf("W - Double Turn    \n");
 	if(swap_count != 0)
 		printf("Q - Swap     \n");
 }
@@ -148,11 +148,13 @@ bool Winner(char table[9][9]) {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 5; j++) {
             if (table[i][j] == 'X' && table[i][j+1] == 'X' && table[i][j+2] == 'X' && table[i][j+3] == 'X' && table[i][j+4] == 'X'){
-            	printf("Player 2 WINS!");
+            	printf("Player 2 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
             if (table[i][j] == 'O' && table[i][j+1] == 'O' && table[i][j+2] == 'O' && table[i][j+3] == 'O' && table[i][j+4] == 'O'){
-            	printf("Player 1 WINS!");
+            	printf("Player 1 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
         }
@@ -162,11 +164,13 @@ bool Winner(char table[9][9]) {
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 9; j++) {
             if (table[i][j] == 'X' && table[i+1][j] == 'X' && table[i+2][j] == 'X' && table[i+3][j] == 'X' && table[i+4][j] == 'X'){
-            	printf("Player 2 WINS!");
+            	printf("Player 2 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
             if (table[i][j] == 'O' && table[i+1][j] == 'O' && table[i+2][j] == 'O' && table[i+3][j] == 'O' && table[i+4][j] == 'O'){
-            	printf("Player 1 WINS!");
+            	printf("Player 1 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
         }
@@ -176,11 +180,13 @@ bool Winner(char table[9][9]) {
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
             if (table[i][j] == 'X' && table[i+1][j+1] == 'X' && table[i+2][j+2] == 'X' && table[i+3][j+3] == 'X' && table[i+4][j+4] == 'X'){
-            	printf("Player 2 WINS!");
+            	printf("Player 2 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
             if (table[i][j] == 'O' && table[i+1][j+1] == 'O' && table[i+2][j+2] == 'O' && table[i+3][j+3] == 'O' && table[i+4][j+4] == 'O'){
-            	printf("Player 1 WINS!");
+            	printf("Player 1 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
         }
@@ -190,11 +196,13 @@ bool Winner(char table[9][9]) {
     for (int i = 4; i < 9; i++) {
         for (int j = 0; j < 5; j++) {
             if (table[i][j] == 'X' && table[i-1][j+1] == 'X' && table[i-2][j+2] == 'X' && table[i-3][j+3] == 'X' && table[i-4][j+4] == 'X'){
-            	printf("Player 2 WINS!");
+            	printf("Player 2 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
             if (table[i][j] == 'O' && table[i-1][j+1] == 'O' && table[i-2][j+2] == 'O' && table[i-3][j+3] == 'O' && table[i-4][j+4] == 'O'){
-            	printf("Player 1 WINS!");
+            	printf("Player 1 WINS!\n");
+                printf("Game Over!\n");
                 return true;
                 }
         }

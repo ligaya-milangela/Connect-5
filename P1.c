@@ -28,7 +28,7 @@ int main(int argc,  char *argv[]){
 
     char buffer[256];
     if (argc < 3) {
-        printf("Usage: %s hostname port_no",  argv[0]);
+        //printf("Usage: %s hostname port_no",  argv[0]);
         exit(1);
     }
 
@@ -38,12 +38,12 @@ int main(int argc,  char *argv[]){
     if (client_sock < 0) 
         die_with_error("Error: socket() Failed.");
 
-    printf("Looking for host '%s'...\n", argv[1]);
+    //printf("Looking for host '%s'...\n", argv[1]);
     server = gethostbyname(argv[1]);
     if (server == NULL) {
         die_with_error("Error: No such host.");
     }
-    printf("Host found!\n");
+    //printf("Host found!\n");
 
     // Establish a connection to server
     port_no = atoi(argv[2]);
@@ -55,11 +55,11 @@ int main(int argc,  char *argv[]){
          
     server_addr.sin_port = htons(port_no);
 
-    printf("Connecting to PC2 at port %d...\n", port_no);
+    //printf("Connecting to PC2 at port %d...\n", port_no);
     if (connect(client_sock, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) 
         die_with_error("Error: connect() Failed.");
 
-    printf("Connection successful!\n");
+    printf("Game Start!\n");
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < cols; j++) {
             table[i][j] = ' ';
@@ -77,6 +77,7 @@ int main(int argc,  char *argv[]){
     	if (tolower(buffer[0]) == 'w' && doubleturn_count != 0)
     	{
     		for(int i = 0; i < 2; i++){
+                printf("Enter column: ");
     			fgets(buffer, 255, stdin);
     			if(i == 0)
     			{
@@ -100,7 +101,7 @@ int main(int argc,  char *argv[]){
     if (Winner(table)){
         break;
     }
-    printf("Sending message to PC2 ...\n");
+    printf("Sending move to PC2 ...\n");
     
     
     if (n < 0) 

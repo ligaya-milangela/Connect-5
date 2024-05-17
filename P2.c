@@ -60,7 +60,7 @@ int main(int argc, char *argv[]){
     if (client_sock < 0) 
         die_with_error("Error: accept() Failed.");
 
-    printf("PC1 succesfully connected ...\n");    
+    printf("Game Start\n");    
     // Communicate  
     while(1){  
     
@@ -84,6 +84,7 @@ int main(int argc, char *argv[]){
     	if (tolower(buffer[0]) == 'w' && doubleturn_count != 0)
     	{
     		for(int i = 0; i < 2; i++){
+                printf("Enter column: ");
     			fgets(buffer, 255, stdin);
     			if(i == 0)
     			{
