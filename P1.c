@@ -19,6 +19,9 @@ int main(int argc,  char *argv[]){
    int doubleturn_count = 1;
     int swap_count = 1;
     char table[rows][cols];
+    int row1, row2;
+    char col1;
+    char col2;
     
     
     
@@ -28,7 +31,7 @@ int main(int argc,  char *argv[]){
 
     char buffer[256];
     if (argc < 3) {
-        //printf("Usage: %s hostname port_no",  argv[0]);
+        printf("Usage: %s hostname port_no",  argv[0]);
         exit(1);
     }
 
@@ -43,7 +46,7 @@ int main(int argc,  char *argv[]){
     if (server == NULL) {
         die_with_error("Error: No such host.");
     }
-    //printf("Host found!\n");
+    //printf("Game!!\n");
 
     // Establish a connection to server
     port_no = atoi(argv[2]);
@@ -59,7 +62,7 @@ int main(int argc,  char *argv[]){
     if (connect(client_sock, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) 
         die_with_error("Error: connect() Failed.");
 
-    printf("Game Start!\n");
+    printf("Connection successful!\n");
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < cols; j++) {
             table[i][j] = ' ';
@@ -74,10 +77,10 @@ int main(int argc,  char *argv[]){
     do {
      	printf("Enter column : ");
     	fgets(buffer, 255, stdin);
-    	if (tolower(buffer[0]) == 'w' && doubleturn_count != 0)
+    	if (tolower(buffer[0]) == '2' && doubleturn_count != 0)
     	{
     		for(int i = 0; i < 2; i++){
-                printf("Enter column: ");
+    			printf("Enter column: ");
     			fgets(buffer, 255, stdin);
     			if(i == 0)
     			{
@@ -85,16 +88,26 @@ int main(int argc,  char *argv[]){
     				
     			}
     		}
+    		doubleturn_count = 0;
+    	}
+    	else if (tolower(buffer[0] == '3') && swap_count != 0){
+    		printf("Enter coordinates for the first position (e.g., 8 A): ");
+    		scanf("%d %c", &row1, &col1);
+    		printf("Enter coordinates for the second position (e.g., 8 B): ");
+    		scanf("%d %c", &row2, &col2);
+    		swap(row1, col1, row2, col2, table);
     	}
     } while (
     	choices(tolower(buffer[0]), shuffle_count, doubleturn_count)
     	
     	);
 
-    if (shuffle_count == 1 && tolower(buffer[0]) == 'z'){
+    if (shuffle_count == 1 && tolower(buffer[0]) == '1'){
     	shuffle_count = 0;}
-    if(doubleturn_count == 1 && tolower(buffer[0]) == 'w'){
+    if(doubleturn_count == 1 && tolower(buffer[0]) == '2'){
     	doubleturn_count = 0; }
+    if(swap_count == 1 && tolower(buffer[0]) == '3'){
+    	swap_count = 0;}
     option(buffer, 'O', table);
     
     n = send(client_sock, table, 81, 0);
@@ -107,7 +120,7 @@ int main(int argc,  char *argv[]){
     if (n < 0) 
          die_with_error("Error: send() Failed.");
          
-    printf("Message sent! Awaiting reply ...\n");
+    //printf("Message sent! Awaiting reply ...\n");
     bzero(buffer, 256);
     n = recv(client_sock, buffer, 255, 0);
     modify_table(buffer, table);

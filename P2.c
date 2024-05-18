@@ -19,6 +19,9 @@ int main(int argc, char *argv[]){
     int server_sock, client_sock, port_no, client_size, n;
     char buffer[256];
     bool ismain_loop = 1;
+    int row1, row2;
+    char col1;
+    char col2;
     struct sockaddr_in server_addr, client_addr;
     if (argc < 2) {
         printf("Usage: %s port_no", argv[0]);
@@ -43,9 +46,9 @@ int main(int argc, char *argv[]){
        
     // Mark the socket so it will listen for incoming connections
     listen(server_sock, 5);
-    printf("PC2 listening to port %d ...\n", port_no);
+    //printf("PC2 listening to port %d ...\n", port_no);
     
-    printf("Waiting for connection(s) ...\n");
+    //printf("Waiting for connection(s) ...\n");
     for(int i = 0; i < 9; i++) {
         for(int j = 0; j < 9; j++) {
             table[i][j] = ' ';
@@ -60,7 +63,7 @@ int main(int argc, char *argv[]){
     if (client_sock < 0) 
         die_with_error("Error: accept() Failed.");
 
-    printf("Game Start\n");    
+    printf("PC1 succesfully connected ...\n");    
     // Communicate  
     while(1){  
     
@@ -81,10 +84,10 @@ int main(int argc, char *argv[]){
     do {
      	printf("Enter column : ");
     	fgets(buffer, 255, stdin);
-    	if (tolower(buffer[0]) == 'w' && doubleturn_count != 0)
+    	if (tolower(buffer[0]) == '2' && doubleturn_count != 0)
     	{
     		for(int i = 0; i < 2; i++){
-                printf("Enter column: ");
+    		printf("Enter column: ");
     			fgets(buffer, 255, stdin);
     			if(i == 0)
     			{
@@ -92,16 +95,26 @@ int main(int argc, char *argv[]){
     				
     			}
     		}
+    		doubleturn_count = 0;
+    	}
+    	else if (tolower(buffer[0] == '3') && swap_count != 0){
+    		printf("Enter coordinates for the first position (e.g., 8 A): ");
+    		scanf("%d %c", &row1, &col1);
+    		printf("Enter coordinates for the second position (e.g., 8 B): ");
+    		scanf("%d %c", &row2, &col2);
+    		swap(row1, col1, row2, col2, table);
     	}
     } while (
     	choices(tolower(buffer[0]), shuffle_count, doubleturn_count)
     	);
-    if(shuffle_count == 1 && tolower(buffer[0]) == 'z'){
+    if(shuffle_count == 1 && tolower(buffer[0]) == '1'){
     	shuffle_count = 0;
     	}
-    if(doubleturn_count == 1 && tolower(buffer[0]) == 'w'){
+    if(doubleturn_count == 1 && tolower(buffer[0]) == '2'){
     	doubleturn_count = 0;
     	}
+    if(swap_count == 1 && tolower(buffer[0]) == '3'){
+    	swap_count = 0;}
     option(buffer, 'X', table);
     
     n = send(client_sock, table, 81, 0);
