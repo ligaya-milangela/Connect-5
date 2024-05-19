@@ -32,7 +32,7 @@ bool choices(char input, int shuffle_count, int swap_count){
 	return (input != 'a' && input != 'b' &&
     	input != 'c' && input != 'd' &&
     	input != 'e' && input != 'f' &&
-    	input != 'g' && input != 'h' && input != '1' && input != '3' ||
+    	input != 'g' && input != 'h' && input != '1' && input != '3' && input != '2' || 
     	(input == '1' && shuffle_count == 0) && (input == '3' && swap_count == 0));
 }
 void die_with_error(char *error_msg){
@@ -98,60 +98,8 @@ void shuffle(char table[9][9]) {
     display(table);
     
 }
-int convert_char(char col){
-	switch ((tolower(col))){
-	case 'a':
-            return 1;
-            break;
-        case 'b':
-            return 2;
-            break;
-        case 'c':
-            return 3;
-            break;
-        case 'd':
-            return 4;
-            break;
-        case 'e':
-            return 5;
-            break;
-        case 'f':
-            return 6;
-            break;
-        case 'g':
-            return 7;
-            break;
-        case 'h':
-            return 8;
-            break;
-        default:
-            return -1;
-	}
-}
-void swap(char col1, int row1,  char col2, int row2, char table[9][9]) {            //coordinates of the two position to swap
-    
-    if (tolower(col1) >= 'a' && tolower(col1) <= 'h'&& row1 >= 1 && row1 <= 8  &&
-        tolower(col2) >= 'a' && tolower(col2) <= 'h' && row2 >= 1 && row2 <= 8) 
-         {                 // Check if the provided coordinates are within the valid range
-        char temp = table[row1][convert_char(col1)];
-        table[row1][convert_char(col1)] = table[row2][convert_char(col2)];
-        table[row2][convert_char(col2)] = temp;
-        
-    }
-   
-    display(table);
-}
 
-void block_column(int col, char table[9][9]){
-	for(int i = 0; i < 9; i++){
-		if(table[i][col] == ' ')
-			table[i][col] = '-'; 
-	}
-	display(table);
-
-}
-
-void option(const char* input, char player_turn, char table[9][9]){
+void option(char *input, char player_turn, char table[9][9]){
      switch (tolower(input[0])){
         case 'a':
             block(1, table, player_turn);
@@ -185,6 +133,80 @@ void option(const char* input, char player_turn, char table[9][9]){
         default:
             printf("Invalid Input\n");
     }
+}
+
+int convert_char(char col){
+	switch ((tolower(col))){
+	case 'a':
+            return 1;
+            break;
+        case 'b':
+            return 2;
+            break;
+        case 'c':
+            return 3;
+            break;
+        case 'd':
+            return 4;
+            break;
+        case 'e':
+            return 5;
+            break;
+        case 'f':
+            return 6;
+            break;
+        case 'g':
+            return 7;
+            break;
+        case 'h':
+            return 8;
+            break;
+        default:
+            return -1;
+	}
+}
+void swap(char col1, int row1,  char col2, int row2, char table[9][9]) {            //coordinates of the two position to swap
+	char temp = table[row1][convert_char(col1)];
+	table[row1][convert_char(col1)] = table[row2][convert_char(col2)];
+	table[row2][convert_char(col2)] = temp;
+
+   
+	display(table);
+}
+bool checkTable(char col1, int row1,  char col2, int row2, char table[9][9]) {
+	if (row1 == row2 && col1 == col2) {
+		printf("Cannot swap same coordinates!\n");
+		return true;
+	}
+	if (table[row1][convert_char(col1)] == ' ' || table[row2][convert_char(col2)] == ' ') {
+		printf("Cannot swap null values!\n");
+		return true;
+	}
+	return false;
+}
+void inputForSwap(char table[9][9]) {
+	int row1, row2;
+	char col1;
+        char col2;
+    	do {
+		do {
+			printf("Enter coordinates for the first position (e.g., A8): ");
+			scanf(" %c%d", &col1, &row1);
+		} while ((tolower(col1) < 'a' || tolower(col1) > 'h') || !(row1 >= 1 && row1 <= 8));
+		do {
+			printf("\nEnter coordinates for the second position (e.g., B8): ");
+			scanf(" %c%d", &col2, &row2);
+		} while ((tolower(col2) < 'a' || tolower(col2) > 'h') || !(row2 >= 1 && row2 <= 8));
+	} while(checkTable(col1, row1, col2, row2, table));
+	swap(col1, row1, col2, row2, table);
+}
+void block_column(int col, char table[9][9]){
+	for(int i = 0; i < 9; i++){
+		if(table[i][col] == ' ')
+			table[i][col] = '-'; 
+	}
+	display(table);
+
 }
 
 bool Winner(char table[9][9]) {

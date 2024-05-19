@@ -82,7 +82,7 @@ int main(int argc,  char *argv[]){
     		for(int i = 0; i < 2; i++){
     			do{
     				printf("Enter column: ");
-    			fgets(buffer, 255, stdin);
+    				fgets(buffer, 255, stdin);
     			}
     			while(
     				tolower(buffer[0]) < 'a' || tolower(buffer[0]) > 'h'
@@ -97,12 +97,7 @@ int main(int argc,  char *argv[]){
     		doubleturn_count = 0;
     	}
     	else if (tolower(buffer[0] == '3') && swap_count != 0){
-    		printf("Enter coordinates for the first position (e.g., A8): ");
-    		scanf(" %c%d", &col1, &row1);
-    		printf("Enter coordinates for the second position (e.g., B8): ");
-    		scanf(" %c%d", &col2, &row2);
-    		swap(col1, row1, col2, row2, table);
-    		
+    		inputForSwap(table);
     	}
     } while (
     	choices(tolower(buffer[0]), shuffle_count, doubleturn_count)
