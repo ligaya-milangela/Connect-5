@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "function.c"
+#include "functions.c"
 
 int main(int argc, char *argv[]){
     char c;
