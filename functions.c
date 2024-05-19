@@ -124,17 +124,21 @@ int convert_char(char col){
         case 'h':
             return 8;
             break;
+        default:
+            return -1;
 	}
 }
-void swap(int row1, char col1, int row2, char col2, char table[9][9]) {            //coordinates of the two position to swap
-    if (row1 >= 1 && row1 <= 8 && tolower(col1) >= 'a' && tolower(col1) <= 'h' &&
-        row2 >= 1 && row2 <= 8 && tolower(col2) >= 'a' && tolower(col2) <= 'h') 
-        {                      // Check if the provided coordinates are within the valid range
-        
+void swap(char col1, int row1,  char col2, int row2, char table[9][9]) {            //coordinates of the two position to swap
+    
+    if (tolower(col1) >= 'a' && tolower(col1) <= 'h'&& row1 >= 1 && row1 <= 8  &&
+        tolower(col2) >= 'a' && tolower(col2) <= 'h' && row2 >= 1 && row2 <= 8) 
+         {                 // Check if the provided coordinates are within the valid range
         char temp = table[row1][convert_char(col1)];
         table[row1][convert_char(col1)] = table[row2][convert_char(col2)];
         table[row2][convert_char(col2)] = temp;
-    } 
+        
+    }
+   
     display(table);
 }
 
